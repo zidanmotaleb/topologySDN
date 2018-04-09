@@ -17,7 +17,7 @@ public class Topology {
 		File ifile = new File(filename);
 		File iEdgesFile = new File(fileEgdes);
 		if (ifile.canRead()) {
-			Graph G = new Graph(ifile, iEdgesFile, new GraphSize(132,50));
+			Graph G = new Graph(ifile, iEdgesFile, new GraphSize(0,0,132,50));
 			G.print();
 			G.breadthFirst();
 		} else {

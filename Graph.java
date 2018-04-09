@@ -107,20 +107,36 @@ class GraphReader {
 	}
 }
 class GraphSize {
+	final private int xo;
+	final private int yo;
 	final private int xs;
 	final private int ys;
 
-	public GraphSize(int xs, int ys) {
+	public GraphSize(int xo, int yo, int xs, int ys) {
 		super();
+		this.xo = xo;
+		this.yo = yo;
 		this.xs = xs;
 		this.ys = ys;
 	}
 
+	public int getXo() {
+		return xo;
+	}
+	public int getYo() {
+		return yo;
+	}	
 	public int getXs() {
 		return xs;
 	}
 	public int getYs() {
 		return ys;
+	}	
+	public int getXl() {
+		return  xs-xo;
+	}
+	public int getYl() {
+		return ys-yo;
 	}	
 }
 public class Graph {
@@ -132,7 +148,8 @@ public class Graph {
 		System.out.println();
 		System.out.println("====================");
 		System.out.println("The Graph Size = ("+ graphSize.getXs() + "," + graphSize.getYs() + ")");
-	}     
+		area = new Area();
+	}     	
 
 	public void breadthFirst() {
 		System.out.println("Breadth first traversal");     	
@@ -209,7 +226,7 @@ public class Graph {
 		int numberContr = 3, contrID =1000, j =0, k =1;	
 		int contrX =0, contrY =0;
 		Point[] areaN = Util.divide( graphSize.getXs(), numberContr);
-		Point[] contrsLocations = new Point[numberContr];
+		Node[] contrsLocations = new Node[numberContr];
 		int start = 0;
 		int end = 0;
 		for (int i=0; i < numberContr ; i++){
@@ -236,20 +253,23 @@ public class Graph {
 			System.out.println("Area #: " + i);
 			System.out.println("The temprary Location of the Controller = " + tempLocation);
 			for(Node node: nodesInArea)
-				System.out.println(node);
-			
+				System.out.println(node);			
 			j += 2;
-			k += 2;
+			k += 2;			
+			Node contrLocation = Util.controllerLocation(tempNodeContr, nodesInArea);
+			contrsLocations[i] = contrLocation;
 			
-			tempNodeContr = Util.controllerLocation(tempNodeContr, nodesInArea);
-			//contrsLocations[i] = contrLocation;
-			//System.out.println("The Location of the Controller = " + contrLocation);
+			area.addPartition(contrLocation, nodesInArea);
+			
+			System.out.println("");
+			System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+			System.out.println("In Area( "+ i +" ) The Location of the Controller = " + contrLocation + " and the node located in this area" + nodesInArea);
 		}
-	// Function to assigned to the closed node to this point. input(nodesArea, begArea, EndArea, midCard) return(newCard)
+	// Function to assign  to the closed node to this point. input(nodesArea, begArea, EndArea, midCard) return(newCard)
 		
-		
-		
-		
+		System.out.println("---------------Printing all Areas------------");
+		area.print();
+			
 		
 	}
 
@@ -310,8 +330,13 @@ public class Graph {
 		}
 	}
 
+	Area getArea() {
+		return area;
+	}
+	
 	// G = <V, E>
 	private Map<Integer, Node> VN;
 	private Map<Integer, ArrayList<Edge>> VE;
 	final private GraphSize graphSize;
+	private Area area;
 }
