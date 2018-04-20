@@ -30,8 +30,6 @@ class Point {
 
 		return "Point("+x+"," +y+")";
 	}
-
-
 }
 
 class Node {
@@ -147,7 +145,8 @@ public class Graph {
 
 		System.out.println();
 		System.out.println("====================");
-		System.out.println("The Graph Size = ("+ graphSize.getXs() + "," + graphSize.getYs() + ")");
+		System.out.println("The Graph Size = ("+ graphSize.getXo() + "," + graphSize.getYo() + ")" + 
+				" and  = ("+ graphSize.getXs() + "," + graphSize.getYs() + ")");
 		area = new Area();
 	}     	
 
@@ -225,7 +224,8 @@ public class Graph {
 	// Function divide the topology area depend on the N, input(graphSize, N), return(Cards[Begin(x, y) End(x,y)] depend on N)
 		int numberContr = 3, contrID =1000, j =0, k =1;	
 		int contrX =0, contrY =0;
-		Point[] areaN = Util.divide( graphSize.getXs(), numberContr);
+		int graphSizeX = graphSize.getXs() - graphSize.getXo();
+		Point[] areaN = Util.divide( graphSizeX, numberContr);
 		Node[] contrsLocations = new Node[numberContr];
 		int start = 0;
 		int end = 0;

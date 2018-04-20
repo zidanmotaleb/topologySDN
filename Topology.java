@@ -4,25 +4,34 @@ import java.io.File;
 
 public class Topology {
 	public static void main(String args[]) {
-		System.out.println("Welcome to Topology analysis Program");
+		System.out.println("Welcome to Controller Placement for Reliable Connections in SDN");
+		System.out.println("");
 		
-		String filename = "/home/zidan/workspace/topo/src/top/data.txt";
+		String fileNodes = "/home/zidan/workspace/topo/src/top/data.txt";
 		String fileEgdes = "/home/zidan/workspace/topo/src/top/edges.txt";
 
 		if (args.length > 0) 
-			filename = args[0];
+			fileNodes = args[0];
 
 
-		System.out.println("Input filename is: " + filename);
-		File ifile = new File(filename);
+		//System.out.println("Input fileNodes is: " + fileNodes);
+		File iNodesFile = new File(fileNodes);
 		File iEdgesFile = new File(fileEgdes);
-		if (ifile.canRead()) {
-			Graph G = new Graph(ifile, iEdgesFile, new GraphSize(0,0,132,50));
+		if (iNodesFile.canRead()) {
+			Graph G = new Graph(iNodesFile, iEdgesFile, new GraphSize(0,0,132,50));
+			System.out.println("///////////////////////////////////////////////");
 			G.print();
 			G.breadthFirst();
 		} else {
-			System.out.println("Unable to read "+filename);
+			System.out.println("Unable to read "+fileNodes);
 		}
+		
+		
+		/*final int numberContr = 3;
+		final int minX = 0;
+		final int minY = 0;
+		final int maxX = 132;
+		final int maxY = 50;*/
 		
 	}
 }
