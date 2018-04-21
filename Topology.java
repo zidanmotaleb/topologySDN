@@ -13,12 +13,17 @@ public class Topology {
 		if (args.length > 0) 
 			fileNodes = args[0];
 
+		final int numberContr = 3;
+		final int minX = 0;
+		final int minY = 0;
+		final int maxX = 132;
+		final int maxY = 50;
 
 		//System.out.println("Input fileNodes is: " + fileNodes);
 		File iNodesFile = new File(fileNodes);
 		File iEdgesFile = new File(fileEgdes);
 		if (iNodesFile.canRead()) {
-			Graph G = new Graph(iNodesFile, iEdgesFile, new GraphSize(0,0,132,50));
+			Graph G = new Graph(iNodesFile, iEdgesFile, numberContr, new GraphSize(minX,minY,maxX,maxY));
 			System.out.println("///////////////////////////////////////////////");
 			G.print();
 			G.breadthFirst();
@@ -27,11 +32,6 @@ public class Topology {
 		}
 		
 		
-		/*final int numberContr = 3;
-		final int minX = 0;
-		final int minY = 0;
-		final int maxX = 132;
-		final int maxY = 50;*/
 		
 	}
 }

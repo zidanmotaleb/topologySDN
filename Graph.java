@@ -1,6 +1,7 @@
 package top;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -10,18 +11,16 @@ import java.util.Map;
 import java.util.Scanner;
 
 class Point {
-	public Point(int x, int y)
+	public Point(double x, double y)
 	{
 		this.x = x;
 		this.y = y;
 	}
-	private int x;
-	private int y;
 	
-	public int getX() {
+	public double getX() {
 		return x;
 	}
-	public int getY() {
+	public double getY() {
 		return y;
 	}
 	
@@ -30,10 +29,12 @@ class Point {
 
 		return "Point("+x+"," +y+")";
 	}
+	private double x;
+	private double y;
 }
 
 class Node {
-	public Node(int i, int x, int y)
+	public Node(int i, double x, double y)
 	{
 		id = i;
 		cord = new Point(x, y);
@@ -104,6 +105,71 @@ class GraphReader {
 		return edges;
 	}
 }
+
+class GmlHeader {
+    public String toString() {
+	String str = new String();
+	str += "  DateObtained " + '"' + DateObtained + "\"\n";
+	str += "  GeoLocation \"" + GeoLocation + "\"\n";
+	str += "  GeoExtent \"" + GeoExtent + "\"\n";
+	str += "  Network \"" + Network + "\"\n";
+	str += "  Provenance \"" + Provenance + "\"\n";
+	str += "  Access " + Access + "\n";
+	str += "  Source \"" + Source + "\"\n";
+	str += "  Version \"" + Version + "\"\n";
+	str += "  Type \"" + Type + "\"\n";
+	str += "  DateType \"" + DateType + "\"\n";
+	str += "  Backbone " + Backbone +  "\n";
+	str += "  Commercial " + Commercial + "\n";
+	str += "  label \"" + label + "\"\n";
+	str += "  ToolsetVersion \"" + ToolsetVersion + "\"\n";
+	str += "  Customer " + Customer + "\n";
+	str += "  IX " + IX + "\n";
+	str += "  SourceGitVersion \"" + SourceGitVersion + "\"\n";
+	str += "  DateModifier \"" + DateModifier + "\"\n";
+	str += "  DateMonth \"" + DateMonth +  "\"\n";
+	str += "  LastAccess \"" + LastAccess + "\"\n";
+	str += "  Layer \"" + Layer + "\"\n";
+	str += "  Creator \"" + Creator + "\"\n";
+	str += "  Developed " + Developed + "\n";
+	str += "  Transit " + Transit + "\n";
+	str += "  NetworkDate \"" + NetworkDate + "\"\n";
+	str += "  DateYear \"" + DateYear + "\"\n";
+	str += "  LastProcessed \"" + LastProcessed + "\"\n";
+	str += "  Testbed " + Testbed;
+	return str;
+    }
+    
+    public String DateObtained="3/02/11";
+    public String GeoLocation="US";
+    public String GeoExtent="Country";
+    public String  Network="Abilene";
+    public String  Provenance="Primary";
+    public int  Access = 0;
+    public String  Source="http://www.internet2.edu/pubs/200502-IS-AN.pdf";
+    public String  Version="1.0";
+    public String  Type="REN";
+    public String  DateType="Historic";
+    public int  Backbone = 1;
+    public int  Commercial = 0;
+    public String  label ="Abilene";
+    public String  ToolsetVersion ="0.3.34dev-20120328";
+    public int  Customer = 0;
+    public int  IX = 0;
+    public String  SourceGitVersion="e278b1b";
+    public String  DateModifier="=";
+    public String  DateMonth="02";
+    public String  LastAccess="3/02/11";
+    public String  Layer="IP";
+    public int  Developed = 0;
+    public int  Transit = 0;
+    public String  NetworkDate="2005_02";
+    public String  DateYear="2005";
+    public String  LastProcessed="2011_09_01";
+    public int  Testbed = 0;
+	public String  Creator="Topology Zoo Toolset";
+}
+
 class GraphSize {
 	final private int xo;
 	final private int yo;
@@ -139,9 +205,10 @@ class GraphSize {
 }
 public class Graph {
 
-	public Graph(File ifile, File edgesFile,final GraphSize graphSize) {
+	public Graph(File ifile, File edgesFile,int nContr, GraphSize graphSize) {
 		init(ifile, edgesFile);
-		this.graphSize=graphSize;	
+		this.graphSize=graphSize;
+		this.numberContr = nContr;
 
 		System.out.println();
 		System.out.println("====================");
@@ -150,6 +217,55 @@ public class Graph {
 		area = new Area();
 	}     	
 
+    public void makeGml(Node cntrl)
+    {
+	// header.IX = 4;
+	
+	    try {
+	    	File gmlFile = new File(Constants.DataPath + "/Area_" + cntrl.getId() + ".gml");
+		GmlHeader header = new GmlHeader();
+	    	PrintWriter writer = new PrintWriter(gmlFile);
+	    	writer.println("graph [");
+	    	writer.println(header);
+		
+	    	ArrayList<Node> nodes = area.getNodes(cntrl);
+	    	
+	    	// write nodes ...
+	    	for(Node node : nodes)
+	    	{
+	    		writer.println("\tnode [");
+	    		writer.println("\t  id " + node.getId());
+	    		writer.println("\t  label " + '"' + node.getId() + '"');
+	    		writer.println("\t  Country " + '"' + cntrl.getId() + '"');
+	    		writer.println("\t  Longitude " + node.getCord().getX());
+	    		writer.println("\t  Internal 1");
+	    		writer.println("\t  Latitude " + node.getCord().getY());
+	    		writer.println("\t]");
+	    	}
+	    	
+	    	// write edges ...
+	    	for(Node node : nodes)
+	    	{
+	    		ArrayList<Edge> edges = VE.get(node.getId());
+	    		for(Edge e : edges)
+	    		{
+		    		writer.println("\tedge [");
+		    		writer.println("\t  source " + e.getSrc().getId());
+		    		writer.println("\t  target " + e.getDest().getId());
+		    		writer.println("\t  LinkType \"OC-192\"");
+		    		writer.println("\t  LinkLabel \"OC-192c\"");
+		    		writer.println("\t  LinkNote \"c\"");
+		    		writer.println("\t]");
+	    		}
+	    	}
+	    	writer.println("]");
+	    	
+		writer.close();
+	    } catch(Exception e) {
+	    	e.printStackTrace();
+	    }
+    	
+    }
 	public void breadthFirst() {
 		System.out.println("Breadth first traversal");     	
 
@@ -222,13 +338,13 @@ public class Graph {
 
 
 	// Function divide the topology area depend on the N, input(graphSize, N), return(Cards[Begin(x, y) End(x,y)] depend on N)
-		int numberContr = 3, contrID =1000, j =0, k =1;	
-		int contrX =0, contrY =0;
+		int contrID =1000, j =0, k =1;	
+		double contrX =0, contrY =0;
 		int graphSizeX = graphSize.getXs() - graphSize.getXo();
 		Point[] areaN = Util.divide( graphSizeX, numberContr);
 		Node[] contrsLocations = new Node[numberContr];
-		int start = 0;
-		int end = 0;
+		 double start = 0;
+		double end = 0;
 		for (int i=0; i < numberContr ; i++){
 			System.out.println("j =" + j + " k ="+ k);
 			//System.out.println("Starting point of Area = " + areaN[j] );
@@ -264,11 +380,14 @@ public class Graph {
 			System.out.println("");
 			System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
 			System.out.println("In Area( "+ i +" ) The Location of the Controller = " + contrLocation + " and the node located in this area" + nodesInArea);
+			
+			makeGml(contrLocation);
 		}
 	// Function to assign  to the closed node to this point. input(nodesArea, begArea, EndArea, midCard) return(newCard)
 		
 		System.out.println("---------------Printing all Areas------------");
 		area.print();
+		
 			
 		
 	}
@@ -339,4 +458,5 @@ public class Graph {
 	private Map<Integer, ArrayList<Edge>> VE;
 	final private GraphSize graphSize;
 	private Area area;
+	private int numberContr;
 }

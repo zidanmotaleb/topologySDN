@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
-
+// the path: /home/zidan/workspace/topo/src/top/Bellcanada.gml   /home/zidan/workspace/topo/Area_1.gml
 class Main {
 	private static final double FAKE_INF = 1E11;
 	public static class Node {
@@ -156,6 +156,8 @@ class Main {
 		String fileName;
 		System.out.print("Enter data file: ");
 		fileName = scanner.nextLine();
+		
+		fileName = Constants.DataPath + "/" + fileName;
 		
 		// parse input here;
 		try {
